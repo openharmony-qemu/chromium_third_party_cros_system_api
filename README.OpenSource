@@ -1,11 +1,11 @@
 [
     {
-        "Name": "system_api",                   # 上游开源软件名全称
-        "License": "webressources",        # 上游开源软件中包含的许可证信息
-        "License File": "LICENSE",        # 许可证所在文件路径
+        "Name": "system_api",
+        "License": "BSD-3-Clause,
+        "License File": "LICENSE",
         "Version Number": "bf9d8619a4a132b59de7d9043ffe415d6df8917f",
         "Owner": "liujixin@huawei.com",
-        "Upstream URL": "https://chromium.googlesource.com/chromiumos/platform2/system_api.git@bf9d8619a4a132b59de7d9043ffe415d6df8917f",   # 上游软件包发布地址
-        "Description": "第三方软件cros_system_api"           # 开源软件功能描述
+        "Upstream URL": "https://chromium.googlesource.com/chromiumos/platform2/system_api.git@bf9d8619a4a132b59de7d9043ffe415d6df8917f",
+        "Description": "第三方软件cros_system_api"
     }
 ]
