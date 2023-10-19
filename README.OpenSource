@@ -6,6 +6,6 @@
         "Version Number": "bf9d8619a4a132b59de7d9043ffe415d6df8917f",
         "Owner": "liujixin@huawei.com",
         "Upstream URL": "https://chromium.googlesource.com/chromiumos/platform2/system_api.git@bf9d8619a4a132b59de7d9043ffe415d6df8917f",
-        "Description": "第三方软件cros_system_api"
+        "Description": "第三方软件cros_system_api，包含常量和定义"
     }
 ]
