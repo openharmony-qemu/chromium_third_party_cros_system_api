@@ -1,6 +1,6 @@
 [
     {
-        "Name": "system_api",
+        "Name": "cros_system_api",
         "License": "BSD-3-Clause,
         "License File": "LICENSE",
         "Version Number": "bf9d8619a4a132b59de7d9043ffe415d6df8917f",
