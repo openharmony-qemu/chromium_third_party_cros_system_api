@@ -7,7 +7,7 @@ syntax = "proto2";
 option optimize_for = LITE_RUNTIME;
 
 package arc;
-option go_package = "chromiumos/system_api/arc_proto";
+option go_package = "go.chromium.org/chromiumos/system_api/arc_proto";
 
 // ARC start options sent from Chrome to session manager. This message is used
 // in the SessionManagerInterface.StartArcMiniContainer method for ARC
@@ -34,6 +34,15 @@ message StartArcMiniInstanceRequest {
     MEMORY_PROFILE_16G = 3;
   }
 
+  enum HostUreadaheadMode {
+    // By default, ureadahead is in readahead mode.
+    MODE_DEFAULT = 0;
+    // Ureadahead is in generate mode.
+    MODE_GENERATE = 1;
+    // Ureadahead is in disabled mode.
+    MODE_DISABLED = 2;
+  }
+
   optional bool native_bridge_experiment = 1 [default = false];
 
   // The density value passed to "ro.sf.lcd_density" property.
@@ -53,10 +62,7 @@ message StartArcMiniInstanceRequest {
   optional bool arc_print_spooler_experiment = 6
       [default = false, deprecated = true];
 
-  // Option to disable ureadahead, Used in specialized tests.
-  // TODO(b/264585671): Refactore this and host_ureadahead_generation to
-  // mode enum.
-  optional bool disable_ureadahead = 7 [default = false];
+  reserved 7;
 
   // Option to disable by hiding default apps shipped on the system image.
   // To be used locally in development that involves overriding these apps.
@@ -81,7 +87,8 @@ message StartArcMiniInstanceRequest {
   optional bool arc_generate_pai = 11 [default = false];
 
   // Enables use of new notifications ui.
-  optional bool enable_notifications_refresh = 13 [default = false];
+  optional bool enable_notifications_refresh = 13
+      [default = false, deprecated = true];
 
   // Option to enable TTS caching
   optional bool enable_tts_caching = 14 [default = false];
@@ -89,9 +96,7 @@ message StartArcMiniInstanceRequest {
   // Option to enable disable consumer auto update toggle.
   optional bool enable_consumer_auto_update_toggle = 15 [default = false];
 
-  // Flag to indicate mode with active host ureadahead generation.
-  // TODO(b/264585671): Refactore this and disable_ureadahead to mode enum.
-  optional bool host_ureadahead_generation = 16 [default = false];
+  reserved 16;
 
   // Option to enable privacy hub for chrome in android settings.
   optional bool enable_privacy_hub_for_chrome = 17 [default = false];
@@ -100,7 +105,25 @@ message StartArcMiniInstanceRequest {
   // TODO(b/268706760): Remove this flag when ARC KeyMint upgrade is done.
   optional bool arc_switch_to_keymint = 18 [default = false];
 
-  // Next ID to use: 19
+  // Experimental value to test various possible values for the
+  // "ro.vendor.arc.sf.maxacquired" property setting.
+  optional int32 force_max_acquired_buffers_experiment = 19 [default = -1];
+
+  // Flag to use dev caches in arccachesetup service.
+  optional bool use_dev_caches = 20 [default = false];
+
+  // Flag to set host ureadahead mode.
+  optional HostUreadaheadMode host_ureadahead_mode = 21
+      [default = MODE_DEFAULT];
+
+  // Flag that indicates whether user is already signed into ARC.
+  optional bool arc_signed_in = 22 [default = false];
+
+  // Flag that would enable ARC Attestation, and would make ARC
+  // RemotelyProvisionedComponentDevice visible to Keystore.
+  optional bool enable_arc_attestation = 23 [default = false];
+
+  // Next ID to use: 24
 }
 
 // ARC upgrade options sent from Chrome to session manager. This message is used
@@ -142,9 +165,7 @@ message UpgradeArcContainerRequest {
   // managed.
   optional bool is_managed_adb_sideloading_allowed = 16;
 
-  // See description in StartArcMiniContainerRequest.
-  // TODO(b/264585671): Remove, this is never used for upgrade.
-  optional bool disable_ureadahead = 15 [default = false];
+  reserved 15;
 
   // Option to disable ACTION_BOOT_COMPLETED broadcast for 3rd party apps.
   optional bool skip_boot_completed_broadcast = 2 [default = false];
@@ -185,4 +206,43 @@ message UpgradeArcContainerRequest {
   optional bool skip_tts_cache = 18 [default = false];
 
   // Next ID to use: 19
+}
+
+// It requests to execute a command on ARC shell.
+// Available requests are managed by ArcCroshService in ARC.
+// ArcCroshServiceProvider in Chrome proxies and translates the message for
+// ArcCroshService.
+message ArcShellExecutionRequest {
+  // Supported shell commands to execute on ARC shell.
+  enum ArcShellCommand {
+    TOP = 0;
+    CPUINFO = 1;
+    MEMINFO = 2;
+  }
+
+  // The requested command is executed on ARC shell.
+  optional ArcShellCommand command = 1;
+
+  // User id of the requesting user.
+  // Only request from the primary user is received in ArcCroshServiceProvider
+  // since ARC is tied to the primary user.
+  optional string user_id = 2;
+
+  // Next ID to use: 3
+}
+
+// It contains the execution result of ArcShellExecutionRequest.
+// ArcCroshService in ARC creates the original mojo message,
+// then ArcCroshServiceProvider in Chrome translates it into
+// ArcShellExecutionResult and proxies to crosh.
+message ArcShellExecutionResult {
+  oneof payload {
+    // Acquired output if the execution successes.
+    string stdout = 1;
+
+    // Error message if the execution fails.
+    string error = 2;
+  }
+
+  // Next ID to use: 3
 }
