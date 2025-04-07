@@ -7,6 +7,7 @@
 syntax = "proto3";
 
 package rmad;
+
 option optimize_for = LITE_RUNTIME;
 
 // Defined error codes.
@@ -148,6 +149,9 @@ enum RmadErrorCode {
 
   // No USB found when performing a task that requires a USB.
   RMAD_ERROR_USB_NOT_FOUND = 45;
+
+  // No Diagnostics app found in external or internal storage.
+  RMAD_ERROR_DIAGNOSTICS_APP_NOT_FOUND = 46;
 }
 
 // Defined Rmad components.
@@ -387,6 +391,7 @@ message UpdateRoFirmwareState {
   bool optional = 1;  // If optional is set true by rmad then skip is allowed.
   UpdateFirmware update = 2;
   UpdateChoice choice = 3;
+  bool skip_update_ro_firmware_from_rootfs = 4;
 }
 
 // Pause RMA for restock.
@@ -404,6 +409,16 @@ message RestockState {
 
 // Allow device info to be updated if necessary.
 message UpdateDeviceInfoState {
+  enum FeatureLevel {
+    // The device doesn't require feature level.
+    RMAD_FEATURE_LEVEL_UNSUPPORTED = 0;
+    // The device requires feature level but it is currently unknown.
+    RMAD_FEATURE_LEVEL_UNKNOWN = 1;
+    // Detected feature level.
+    RMAD_FEATURE_LEVEL_0 = 2;
+    RMAD_FEATURE_LEVEL_1 = 3;
+  }
+
   // User provided serial number of device.
   string serial_number = 1;
   // Chosen region index for the current choice. See |region_list| below.
@@ -417,6 +432,10 @@ message UpdateDeviceInfoState {
   string dram_part_number = 5;
   // Chosen custom-label index of device. See |custom_label_list| below.
   int32 custom_label_index = 6;
+  // Chosen boolean for branded chassis.
+  bool is_chassis_branded = 7;
+  // Chosen hardware compliance version, 4 bits.
+  uint32 hw_compliance_version = 8;
 
   // Read only data.
   // List of all valid regions for this device.
@@ -428,6 +447,8 @@ message UpdateDeviceInfoState {
   repeated string whitelabel_list = 104;
   // List of all valid custom-label-tags for this device.
   repeated string custom_label_list = 106;
+  // List of sku descriptions.
+  repeated string sku_description_list = 107;
 
   // Serial number of device at beginning of RMA finalization.
   string original_serial_number = 201;
@@ -442,6 +463,8 @@ message UpdateDeviceInfoState {
   string original_dram_part_number = 205;
   // Custom-label index of device at beginning of RMA finalization.
   int32 original_custom_label_index = 206;
+  // Detected feature level at beginning of RMA finalization.
+  FeatureLevel original_feature_level = 207;
 
   // MLB repair mode.
   bool mlb_repair = 301;
@@ -609,7 +632,7 @@ message RecordBrowserActionMetricReply {
 }
 
 // Defined RO verification status for showing in metrics.
-// Keep this in sync with metrics/structured/structured.xml.
+// Keep this in sync with metrics/structured/sync/structured.xml.
 enum RoVerificationStatus {
   RMAD_RO_VERIFICATION_UNKNOWN = 0;
   RMAD_RO_VERIFICATION_PASS = 1;
@@ -621,7 +644,7 @@ enum RoVerificationStatus {
 }
 
 // Defined returning owner for showing in metrics.
-// Keep this in sync with metrics/structured/structured.xml.
+// Keep this in sync with metrics/structured/sync/structured.xml.
 enum ReturningOwner {
   RMAD_RETURNING_OWNER_UNKNOWN = 0;
   RMAD_RETURNING_OWNER_SAME_OWNER = 1;
@@ -629,7 +652,7 @@ enum ReturningOwner {
 }
 
 // Defined mainboard replacement status for showing in metrics.
-// Keep this in sync with metrics/structured/structured.xml.
+// Keep this in sync with metrics/structured/sync/structured.xml.
 enum MainboardReplacement {
   RMAD_MLB_REPLACEMENT_UNKNOWN = 0;
   RMAD_MLB_REPLACEMENT_REPLACED = 1;
@@ -637,7 +660,7 @@ enum MainboardReplacement {
 }
 
 // Defined additional activities for showing in metrics.
-// Keep this in sync with metrics/structured/structured.xml.
+// Keep this in sync with metrics/structured/sync/structured.xml.
 enum AdditionalActivity {
   RMAD_ADDITIONAL_ACTIVITY_NOTHING = 0;
   RMAD_ADDITIONAL_ACTIVITY_SHUTDOWN = 1;
@@ -648,11 +671,30 @@ enum AdditionalActivity {
 }
 
 // Defined write protection methods for showing in metrics.
-// Keep this in sync with metrics/structured/structured.xml.
+// Keep this in sync with metrics/structured/sync/structured.xml.
 enum WpDisableMethod {
   RMAD_WP_DISABLE_METHOD_UNKNOWN = 0;
   RMAD_WP_DISABLE_METHOD_SKIPPED = 1;
   RMAD_WP_DISABLE_METHOD_RSU = 2;
   RMAD_WP_DISABLE_METHOD_PHYSICAL_ASSEMBLE_DEVICE = 3;
   RMAD_WP_DISABLE_METHOD_PHYSICAL_KEEP_DEVICE_OPEN = 4;
+}
+
+// Reply for ExtractExternalDiagnosticsApp.
+message ExtractExternalDiagnosticsAppReply {
+  RmadErrorCode error = 1;
+  string diagnostics_app_swbn_path = 2;
+  string diagnostics_app_crx_path = 3;
+}
+
+// Reply for InstallExtractedDiagnosticsApp.
+message InstallExtractedDiagnosticsAppReply {
+  RmadErrorCode error = 1;
+}
+
+// Reply for GetInstalledDiagnosticsApp.
+message GetInstalledDiagnosticsAppReply {
+  RmadErrorCode error = 1;
+  string diagnostics_app_swbn_path = 2;
+  string diagnostics_app_crx_path = 3;
 }

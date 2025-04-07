@@ -23,15 +23,13 @@ const char kSessionManagerLoginScreenStorageDelete[] =
     "LoginScreenStorageDelete";
 const char kSessionManagerStartSession[] = "StartSession";
 const char kSessionManagerStartSessionEx[] = "StartSessionEx";
+const char kSessionManagerEmitStartedUserSession[] = "EmitStartedUserSession";
 const char kSessionManagerStopSession[] = "StopSession";
 const char kSessionManagerStopSessionWithReason[] = "StopSessionWithReason";
 const char kSessionManagerLoadShillProfile[] = "LoadShillProfile";
 const char kSessionManagerRestartJob[] = "RestartJob";
 const char kSessionManagerStorePolicyEx[] = "StorePolicyEx";
-const char kSessionManagerStoreUnsignedPolicyEx[] = "StoreUnsignedPolicyEx";
 const char kSessionManagerRetrievePolicyEx[] = "RetrievePolicyEx";
-const char kSessionManagerListStoredComponentPolicies[] =
-    "ListStoredComponentPolicies";
 const char kSessionManagerRetrieveSessionState[] = "RetrieveSessionState";
 const char kSessionManagerRetrieveActiveSessions[] = "RetrieveActiveSessions";
 const char kSessionManagerRetrievePrimarySession[] = "RetrievePrimarySession";
@@ -46,10 +44,6 @@ const char kSessionManagerUnblockDevModeForInitialStateDetermination[] =
     "UnblockDevModeForInitialStateDetermination";
 const char kSessionManagerUnblockDevModeForCarrierLock[] =
     "UnblockDevModeForCarrierLock";
-const char kSessionManagerHandleSupervisedUserCreationStarting[] =
-    "HandleSupervisedUserCreationStarting";
-const char kSessionManagerHandleSupervisedUserCreationFinished[] =
-    "HandleSupervisedUserCreationFinished";
 const char kSessionManagerLockScreen[] = "LockScreen";
 const char kSessionManagerHandleLockScreenShown[] = "HandleLockScreenShown";
 const char kSessionManagerHandleLockScreenDismissed[] =
@@ -104,31 +98,33 @@ const char kContainerShutdownFail[] = INTERFACE ".ContainerShutdownFail";
 const char kGetPeerCredsFailed[] = INTERFACE ".GetPeerCredsFailed";
 const char kDeleteFail[] = INTERFACE ".DeleteFail";
 const char kEmitFailed[] = INTERFACE ".EmitFailed";
+const char kFwmpRemovalFailed[] = INTERFACE ".FwmpRemovalFailed";
 const char kGetServiceFail[] = INTERFACE ".kGetServiceFail";
 const char kInitMachineInfoFail[] = INTERFACE ".InitMachineInfoFail";
 const char kInvalidAccount[] = INTERFACE ".InvalidAccount";
+const char kInvalidArgs[] = INTERFACE ".InvalidArgs";
 const char kLowFreeDisk[] = INTERFACE ".LowFreeDisk";
 const char kNoOwnerKey[] = INTERFACE ".NoOwnerKey";
 const char kNoUserNssDb[] = INTERFACE ".NoUserNssDb";
 const char kNotAvailable[] = INTERFACE ".NotAvailable";
 const char kNotStarted[] = INTERFACE ".NotStarted";
+const char kNvramClearedReadFailed[] = INTERFACE ".NvramClearedReadFailed";
+const char kNvramClearedUpdateFailed[] = INTERFACE ".NvramClearedUpdateFailed";
 const char kPolicyInitFail[] = INTERFACE ".PolicyInitFail";
 const char kPubkeySetIllegal[] = INTERFACE ".PubkeySetIllegal";
 const char kPolicySignatureRequired[] = INTERFACE ".PolicySignatureRequired";
 const char kSessionDoesNotExist[] = INTERFACE ".SessionDoesNotExist";
 const char kSessionExists[] = INTERFACE ".SessionExists";
+const char kSessionNotExists[] = INTERFACE ".SessionNotExists";
 const char kSigDecodeFail[] = INTERFACE ".SigDecodeFail";
 const char kSigEncodeFail[] = INTERFACE ".SigEncodeFail";
+const char kStateKeysRequestFail[] = INTERFACE ".StateKeysRequestFail";
+const char kSystemPropertyUpdateFailed[] =
+    INTERFACE ".SystemPropertyUpdateFailed";
 const char kTestingChannelError[] = INTERFACE ".TestingChannelError";
 const char kUnknownPid[] = INTERFACE ".UnknownPid";
 const char kVerifyFail[] = INTERFACE ".VerifyFail";
-const char kSystemPropertyUpdateFailed[] =
-    INTERFACE ".SystemPropertyUpdateFailed";
 const char kVpdUpdateFailed[] = INTERFACE ".VpdUpdateFailed";
-const char kFwmpRemovalFailed[] = INTERFACE ".FwmpRemovalFailed";
-const char kNvramClearedReadFailed[] = INTERFACE ".NvramClearedReadFailed";
-const char kNvramClearedUpdateFailed[] = INTERFACE ".NvramClearedUpdateFailed";
-const char kInvalidArgs[] = INTERFACE ".InvalidArgs";
 
 #undef INTERFACE
 }  // namespace dbus_error
@@ -187,8 +183,8 @@ enum class SessionStopReason {
   // ARC requests device encryption update.
   ARC_MIGRATION_REQUESTED = 7,
 
-  // ARC provision failed in kiosk mode.
-  ARC_KIOSK_PROVISION_FAILED = 8,
+  // ARC provision failed in kiosk mode. Deprecated
+  // ARC_KIOSK_PROVISION_FAILED = 8,
 
   // Request to optimize memory usage.
   BACKGROUND_OPTIMIZATION_REQUESTED = 9,

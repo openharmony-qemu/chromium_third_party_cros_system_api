@@ -13,7 +13,10 @@ const char kDebugdServiceName[] = "org.chromium.debugd";
 // Methods.
 const char kCupsAddManuallyConfiguredPrinter[] =
     "CupsAddManuallyConfiguredPrinter";
+const char kCupsAddManuallyConfiguredPrinterV2[] =
+    "CupsAddManuallyConfiguredPrinterV2";
 const char kCupsAddAutoConfiguredPrinter[] = "CupsAddAutoConfiguredPrinter";
+const char kCupsAddAutoConfiguredPrinterV2[] = "CupsAddAutoConfiguredPrinterV2";
 const char kCupsRemovePrinter[] = "CupsRemovePrinter";
 const char kCupsRetrievePpd[] = "CupsRetrievePpd";
 const char kDumpDebugLogs[] = "DumpDebugLogs";
@@ -31,8 +34,9 @@ const char kSystraceStop[] = "SystraceStop";
 const char kSystraceStatus[] = "SystraceStatus";
 const char kGetLog[] = "GetLog";
 const char kGetAllLogs[] = "GetAllLogs";
-const char kGetFeedbackLogsV2[] = "GetFeedbackLogsV2";
+const char kGetFeedbackLogs[] = "GetFeedbackLogs";
 const char kGetFeedbackLogsV3[] = "GetFeedbackLogsV3";
+const char kGetFeedbackBinaryLogs[] = "GetFeedbackBinaryLogs";
 const char kKstaledSetRatio[] = "KstaledSetRatio";
 const char kTestICMP[] = "TestICMP";
 const char kTestICMPWithOptions[] = "TestICMPWithOptions";
@@ -66,6 +70,9 @@ const char kKernelFeatureList[] = "KernelFeatureList";
 const char kKernelFeatureEnable[] = "KernelFeatureEnable";
 // PacketCaptureStart method isn't defined as it's not needed by any component.
 const char kPacketCaptureStop[] = "PacketCaptureStop";
+const char kDRMTraceAnnotateLog[] = "DRMTraceAnnotateLog";
+const char kBluetoothStartBtsnoop[] = "BluetoothStartBtsnoop";
+const char kBluetoothStopBtsnoop[] = "BluetoothStopBtsnoop";
 
 // Signals.
 const char kPacketCaptureStartSignal[] = "PacketCaptureStart";
@@ -151,6 +158,16 @@ enum FeedbackLogType {
   OS_RELEASE_INFO = 8,
   VAR_LOG_FILES = 9,
   PMT_DATA = 10,
+  // The dumps may be added to feedback reports only if the
+  // UserFeedbackWithLowLevelDebugDataAllowed policy is enabled for all or wifi.
+  WIFI_FIRMWARE_DUMPS = 11,
+};
+
+// FeedbackBinaryLogType contains the enum representation of different
+// categories of binary data that can be added to feedback reports.
+enum FeedbackBinaryLogType {
+  WIFI_FIRMWARE_DUMP = 0,
+  BLUETOOTH_FIRMWARE_DUMP = 1,
 };
 
 // PrintscanDebugCategories flags. These values must align with those in
@@ -158,6 +175,13 @@ enum FeedbackLogType {
 enum PrintscanDebugCategories {
   PrintscanDebugCategory_PRINTING = 0x1,
   PrintscanDebugCategory_SCANNING = 0x2,
+};
+
+// Firmware dump types for firmware dump operations. These values must align
+// with those in org.chromium.debug.xml.
+enum class FirmwareDumpType {
+  ALL = 0,
+  WIFI = 1,
 };
 
 // Debug log keys which should be substituted in the system info dialog.
@@ -176,9 +200,11 @@ namespace u2f_flags {
 constexpr char kU2f[] = "u2f";
 constexpr char kG2f[] = "g2f";
 constexpr char kVerbose[] = "verbose";
-constexpr char kUserKeys[] = "user_keys";
 constexpr char kAllowlistData[] = "allowlist_data";
-constexpr char kCorpProtocol[] = "corp_protocol";
+constexpr char kDisableCorpProtocol[] = "disable_corp_protocol";
+constexpr char kActivateFips[] = "activate_fips";
+constexpr char kEnableGlobalKey[] = "enable_global_key";
+constexpr char kUserKeys[] = "user_keys";
 }  // namespace u2f_flags
 
 }  // namespace debugd
