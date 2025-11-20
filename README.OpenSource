@@ -1,0 +1,11 @@
+[
+    {
+        "Name": "cros_system_api",
+        "License": "BSD-3-Clause",
+        "License File": "LICENSE",
+        "Version Number": "554629b9242e6ae832ef14e3384654426f7fcc06",
+        "Owner": "huamengzheng@huawei.com",
+        "Upstream URL": "https://chromium.googlesource.com/chromiumos/platform2/system_api.git@554629b9242e6ae832ef14e3384654426f7fcc06",
+        "Description": "第三方软件cros_system_api，包含常量和定义"
+    }
+]
